@@ -1,4 +1,6 @@
-package org.example;// N * N 체스판
+package org.example.p18428_감시피하기;
+
+// N * N 체스판
 // 선생님T 학생S 장애물O
 // 선생님 상하좌우 직선 감시가능
 // 장애물에 가려짐
@@ -17,7 +19,7 @@ package org.example;// N * N 체스판
 // 범위가 굉장히 작네, 완전 탐색으로 단순 무식하게 가자
 import java.util.*;
 import java.io.*;
-public class Test {
+public class Main {
     static int n;
     static char[][] board;
     static int[] dx = {1,-1,0,0};
