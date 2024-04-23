@@ -2,70 +2,56 @@ package org.example;// 단순 정렬하라는 문제인듯
 import java.util.*;
 import java.io.*;
 public class Main {
-    public static void main(String args[]) throws Exception{
-        var br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
-        Student[] students = new Student[n];
-        StringTokenizer tk;
-        for (int i = 0; i < n; i++){
-            tk = new StringTokenizer(br.readLine(), " ");
-            Student s = new Student(
-                    tk.nextToken(),
-                    Integer.parseInt(tk.nextToken()),
-                    Integer.parseInt(tk.nextToken()),
-                    Integer.parseInt(tk.nextToken())
-            );
-            students[i] = s;
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        int[] result = sol.solution(4, new int[]{4,4,4,4,4});
+        for (int r : result){
+            System.out.println(r);
         }
 
-        Arrays.stream(students)
-                .sorted(Comparator.comparing(Student::getKor).reversed() //이렇게 간단하게 뒤집을 수 있다.
-                        .thenComparing(Student::getEng)
-                        .thenComparing(Comparator.comparing(Student::getMath).reversed()) // 여기서 그냥 쌩으로 쓰면 위에꺼 까지 한번에 뒤집힌다.
-                        .thenComparing(Student::getName))
-                .forEach(s -> System.out.println(s.name));
+    }
+}
+class Solution {
+    public int[] solution(int N, int[] stages) {
+
+        Stage[] infos = new Stage[N];
+        // 초기화
+        for (int i = 0; i < N; i++){
+            infos[i] = new Stage(i + 1);
+        }
+
+        // 그리고 stage마다 적용한다.
+        for (int s : stages){
+            for (int j = 0; j < s -1; j++) {
+                Stage cur = infos[j];
+                cur.reached += 1;
+            }
+            if (s -1 >= N) continue;
+            infos[s -1].reached += 1;
+            infos[s -1].stopped += 1;
+        }
+
+        return Arrays.stream(infos).sorted().mapToInt(s -> s.no).toArray();
     }
 
-    public static class Student implements Comparable<Student> {
-        int kor;
-        int eng;
-        int math;
-        String name;
-
-        public int getKor(){
-            return kor;
-        }
-        public int getEng(){
-            return eng;
-        }
-        public int getMath(){
-            return math;
-        }
-        public String getName(){
-            return name;
-        }
-
-        public Student(String name, int kor, int eng, int math){
-            this.kor = kor;
-            this.eng = eng;
-            this.math = math;
-            this.name = name;
+    static class Stage implements Comparable<Stage> {
+        int no;
+        int reached;
+        int stopped;
+        public Stage(int no){
+            this.no = no;
+            this.reached = 0;
+            this.stopped = 0;
         }
 
 
-        // 앞에 있는게 작은거다
-        public int compareTo(Student student){
-            if (student.kor != this.kor){
-                return student.kor - this.kor;
+        public int compareTo(Stage s){
+            int a = this.stopped * s.reached;
+            int b = s.stopped * this.reached;
+            if (a == b){
+                return this.no - s.no; // 오름 차순
             }
-            if (student.eng != this.eng){
-                return this.eng - student.eng;
-            }
-            if (student.math != this.math){
-                return student.math - this.math;
-            }
-            return this.name.compareTo(student.name);
+            return b - a; // 내림차순
         }
-
     }
 }
