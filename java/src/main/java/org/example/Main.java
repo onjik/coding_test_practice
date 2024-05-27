@@ -1,57 +1,38 @@
 package org.example;// 단순 정렬하라는 문제인듯
-import java.util.*;
-import java.io.*;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        Solution sol = new Solution();
-        int[] result = sol.solution(4, new int[]{4,4,4,4,4});
-        for (int r : result){
-            System.out.println(r);
-        }
+        List<String> list = new ArrayList<>();
+        List<Integer> list2 = new ArrayList<>();
+        System.out.println(list.getClass());
+        System.out.println(list.getClass() == list2.getClass());
+
+        GenericClass<String> genericClass = new GenericClass<>(String.class);
+        System.out.println(genericClass.getMyType());
 
     }
-}
-class Solution {
-    public int[] solution(int N, int[] stages) {
+    public static class GenericClass<T> {
 
-        Stage[] infos = new Stage[N];
-        // 초기화
-        for (int i = 0; i < N; i++){
-            infos[i] = new Stage(i + 1);
+        private final Class<T> type;
+
+        public GenericClass() {
+            this.type = type;
         }
 
-        // 그리고 stage마다 적용한다.
-        for (int s : stages){
-            for (int j = 0; j < s -1; j++) {
-                Stage cur = infos[j];
-                cur.reached += 1;
-            }
-            if (s -1 >= N) continue;
-            infos[s -1].reached += 1;
-            infos[s -1].stopped += 1;
+        public Class<T> getMyType() {
+            return this.type;
         }
 
-        return Arrays.stream(infos).sorted().mapToInt(s -> s.no).toArray();
-    }
-
-    static class Stage implements Comparable<Stage> {
-        int no;
-        int reached;
-        int stopped;
-        public Stage(int no){
-            this.no = no;
-            this.reached = 0;
-            this.stopped = 0;
+        public boolean isNull(){
+            return this.type == null;
         }
 
-
-        public int compareTo(Stage s){
-            int a = this.stopped * s.reached;
-            int b = s.stopped * this.reached;
-            if (a == b){
-                return this.no - s.no; // 오름 차순
-            }
-            return b - a; // 내림차순
-        }
     }
 }
